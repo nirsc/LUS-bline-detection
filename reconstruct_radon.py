@@ -6,7 +6,7 @@ import warnings
 def radon_transform(C, X, thetas = None):
     if hasattr(C, '__call__'):
         # C is a function
-        return C(X,output_size=X.shape[0])
+        return C(X, circle = False, theta= thetas)
 
     else:
         # C is a matrix
@@ -16,7 +16,7 @@ def radon_transform(C, X, thetas = None):
 def inverse_radon_transform(C_T, X):
     if hasattr(C_T, '__call__'):
         # C is a function
-        return C_T(X, output_size = X.shape[0], theta = thetas)
+        return C_T(X, output_size = X.shape[0])
 
     else:
         # C is a matrix
@@ -65,7 +65,8 @@ def fb_algorithm(Y, max_iter=1000, mu=0.1, gamma=None, thetas =None ,\
         gamma = (np.sqrt(mu) / 2)
 
     # initial guess, X is the radon transform of Y, unregularized
-    X = radon_transform(C, Y, thetas)
+    X = radon_transform(C_T, Y, thetas)
+
 
     # for i in range(max_iter):
     #     temp = inverse_radon_transform(C, X)

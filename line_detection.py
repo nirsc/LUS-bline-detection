@@ -1,23 +1,7 @@
-import cv2
 import matplotlib.pyplot as plt
-from skimage.transform import radon, iradon
 import numpy as np
 from skimage.feature import peak_local_max
-import math
-from preprocessing import preprocess_image
 
-cap = cv2.VideoCapture('Cov-Atlas-Day+1.avi')
-ret, frame = cap.read()
-# # Our operations on the frame come here
-gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-image = preprocess_image(gray)
-max_angle = 45
-num_peaks = 1
-
-
-angles = np.arange(180)
-pleural_angles = np.arange(75, 105)
-horizontal_r = image.shape[0] / 4
 
 
 def get_intersection_points_of_line_and_image_boundery(bias, slope, image):
@@ -69,18 +53,4 @@ def draw_lines(peaks, image, angles = np.arange(180)):
         plt.plot([point1[1], point2[1]], [point1[0], point2[0]])
 
 
-sinogram = radon(image, theta=angles, circle=False)
-horiontal_lines = get_horizontal_peaks(image=sinogram, num_peaks=1)
-b_lines = get_b_line_peaks(image=sinogram, num_peaks=2)
-
-
-
-# plt.imshow(image, cmap=plt.cm.Greys_r)
-# draw_lines(horiontal_lines,image)
-# draw_lines(b_lines,image)
-
-
-
-
-# plt.show()
 
