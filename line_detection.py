@@ -21,7 +21,7 @@ horizontal_r = image.shape[0] / 4
 
 
 def get_intersection_points_of_line_and_image_boundery(bias, slope, image):
-    x = np.arange(image.shape[1])
+    x = np.arange(int(image.shape[1]/2))+int(image.shape[1]/4)
     y = - slope * x + bias
     in_image = (y > 0) & (y < image.shape[0])
     point1 = (y[in_image][0], x[in_image][0])
@@ -75,12 +75,12 @@ b_lines = get_b_line_peaks(image=sinogram, num_peaks=2)
 
 
 
-plt.imshow(image, cmap=plt.cm.Greys_r)
-draw_lines(horiontal_lines,image)
-draw_lines(b_lines,image)
+# plt.imshow(image, cmap=plt.cm.Greys_r)
+# draw_lines(horiontal_lines,image)
+# draw_lines(b_lines,image)
 
 
 
 
-plt.show()
+# plt.show()
 
