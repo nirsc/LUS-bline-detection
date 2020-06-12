@@ -1,12 +1,14 @@
-from skimage.transform import radon, iradon
+from skimage.transform import radon, iradon, rotate
 import numpy as np
 import warnings
-
+from time import time
+from my_iradon import my_iradon
 
 def radon_transform(C, X, thetas = None):
     if hasattr(C, '__call__'):
         # C is a function
-        return C(X, circle = False, theta= thetas)
+        # op = Radon2D(taxis = np.arange(180),haxis= np.arange(200),pxaxis = np.linspace(0,255,num=5))
+        return C(X, circle = True, theta= thetas)
 
     else:
         # C is a matrix
@@ -16,7 +18,7 @@ def radon_transform(C, X, thetas = None):
 def inverse_radon_transform(C_T, X):
     if hasattr(C_T, '__call__'):
         # C is a function
-        return C_T(X, output_size = X.shape[0])
+        return C_T(X, output_size = X.shape[0], circle= True)
 
     else:
         # C is a matrix
@@ -24,10 +26,11 @@ def inverse_radon_transform(C_T, X):
 
 
 def prox_cauchy(x, gamma, mu):
-    p = gamma * gamma + 2 * mu - (x * x / 3)
-    q = x * gamma * gamma + (x * x * x / 27) + (x / 3) * (gamma * gamma + 2 * mu)
-    s = np.power(q / 2 + np.sqrt(p * p * p / 27 + q * q / 4), 1 / 3)
-    t = np.power(q / 2 - np.sqrt(p * p * p / 27 + q * q / 4), 1 / 3)
+    p = gamma ** 2 + 2 * mu - (x * x / 3)
+    q = x * gamma * gamma + (x ** 3 / 27) + (x / 3) * (gamma ** 2 + 2 * mu)
+    DD = p ** 3 / 27 + q ** 2 / 4
+    s = np.power(np.abs(q / 2 + np.sqrt(DD)), 1 / 3)*np.sign(q/2 + np.sqrt(DD))
+    t = np.power(np.abs(q / 2 - np.sqrt(DD)), 1 / 3)*np.sign(q/2 + np.sqrt(DD))
     z = x / 3 + s + t
     return z
 
@@ -53,8 +56,8 @@ early.
 """
 
 
-def fb_algorithm(Y, max_iter=1000, mu=0.1, gamma=None, thetas =None ,\
-                 C=iradon, C_T=radon, regularizer=None, epsilon=0.01):
+def fb_algorithm(Y, max_iter=1, mu= 0.1 , gamma=None, thetas =None ,\
+                 C=iradon, C_T= radon, regularizer=None, epsilon=0.01):
     # check validity of parmaeters
     if gamma is not None and gamma < (np.sqrt(mu) / 2):
         message = 'gamma and mu do not satisfy condition for convexity,aborting!'
@@ -66,16 +69,19 @@ def fb_algorithm(Y, max_iter=1000, mu=0.1, gamma=None, thetas =None ,\
 
     # initial guess, X is the radon transform of Y, unregularized
     X = radon_transform(C_T, Y, thetas)
+    X /= np.amax(X)
 
+    for i in range(max_iter):
 
-    # for i in range(max_iter):
-    #     temp = inverse_radon_transform(C, X)
-    #     temp -= Y
-    #     u = X - mu * radon_transform(C_T, temp)
-    #     X_curr = prox_cauchy(u, gamma, mu)
-    #
-    #     if np.linalg.norm(X_curr - X) / np.linalg.norm(X) < epsilon:
-    #         return X_curr
-    #     X = X_curr
+        temp = inverse_radon_transform(C, X)
+
+        temp -= Y
+        u = X - mu * radon_transform(C_T, temp)
+        u/=np.amax(u)
+        X_curr = prox_cauchy(u, gamma, mu)
+        #
+        # if np.linalg.norm(X_curr - X) / np.linalg.norm(X) < epsilon:
+        #     return X_curr
+        X = X_curr
 
     return X

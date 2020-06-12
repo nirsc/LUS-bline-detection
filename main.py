@@ -5,6 +5,8 @@ import argparse
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
+import json
+
 vid_file = ''
 
 def main(args):
@@ -36,7 +38,8 @@ if __name__ == '__main__':
     parser.add_argument('--num_b_lines', type=int, default=2,
                         help='number of b-lines to be detected')
     parser.add_argument('--thetas', type = list, default = list(np.arange(180)))
+    parser.add_argument('--infile', nargs=1,
+                        help="JSON file to be processed",
+                        type=argparse.FileType('r'))
     args = parser.parse_args()
-
     main(args)
-    print()

@@ -11,7 +11,9 @@ import numpy as np
 def get_margins(arr, th):
   values, counts = np.unique(arr,return_counts= True)
   filtered_values = [values[i] for i in range(len(values)) if counts[i] > th ]
-  return np.amin(filtered_values),np.amax(filtered_values)
+  if filtered_values:
+    return np.amin(filtered_values),np.amax(filtered_values)
+  return np.amin(arr),np.amax(arr)
 
 """Each frame has borders with ticks and gray background.
 This function finds the crops the relevant parts of the image"""
@@ -26,25 +28,27 @@ def crop_image(img):
   return img[row_margins[0]:row_margins[1],col_margins[0]:col_margins[1]]
 
 
-def center_image(img):
+def center_image(img, square = False):
   n_rows = img.shape[0]
   n_cols = img.shape[1]
-  padded_img = np.zeros((n_rows*2,n_cols*2))
-  row_offset = n_rows
-  col_offset = int(n_cols/2)
-  padded_img[row_offset:,col_offset:col_offset+n_cols] = img
+  max_dim = max(n_rows,n_cols)
+  if square:
+    padded_img = np.zeros(( max_dim*2,max_dim*2))
+    row_offset = max_dim
+    col_offset = int(max_dim / 2)
+  else:
+    padded_img = np.zeros((n_rows*2,n_cols*2))
+    row_offset = n_rows
+    col_offset = int(n_cols/2)
+  padded_img[row_offset:row_offset+n_rows,col_offset:col_offset+n_cols] = img
   return padded_img
 
-# Capture frame-by-frame
-# import numpy as np
-# import cv2
-# import matplotlib.pyplot as plt
-# vid_file = ''
-# cap = cv2.VideoCapture('vid_file')
-# ret, frame = cap.read()
-# # # Our operations on the frame come here
-# gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-# plt.imshow(center_image(crop_image(gray)),cmap = 'gray')
+
+
+
+
+
 
 def preprocess_image(img):
-  return center_image(crop_image(img))
+  return center_image(crop_image(img),True)
+
