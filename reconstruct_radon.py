@@ -57,7 +57,7 @@ early.
 
 
 def fb_algorithm(Y, max_iter=1, mu= 0.1 , gamma=None, thetas =None ,\
-                 C=iradon, C_T= radon, regularizer=None, epsilon=0.01):
+                 C= my_iradon, C_T= radon, regularizer=None, epsilon=0.01):
     # check validity of parmaeters
     if gamma is not None and gamma < (np.sqrt(mu) / 2):
         message = 'gamma and mu do not satisfy condition for convexity,aborting!'

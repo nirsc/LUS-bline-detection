@@ -3,7 +3,6 @@ import numpy as np
 from skimage.feature import peak_local_max
 
 
-
 def get_intersection_points_of_line_and_image_boundary(peak, image, angles):
     peak_r = peak[0]
     peak_theta = angles[peak[1]]
@@ -22,8 +21,8 @@ def get_intersection_points_of_line_and_image_boundary(peak, image, angles):
     return point1, point2
 
 
-def get_peaks(image, num_peaks, neighborhood_size=1):
-    return peak_local_max(image, min_distance=neighborhood_size, num_peaks=num_peaks, exclude_border=False)
+def get_peaks(image, num_peaks, neighborhood_size=5):
+    return peak_local_max(image, min_distance=neighborhood_size, num_peaks=num_peaks)
 
 
 def get_peaks_in_window(image, window_size, angles, num_peaks):
