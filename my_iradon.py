@@ -1,6 +1,6 @@
 from skimage.transform import iradon
 
-
+"""A wrapper for the iradon function meant to deal with the fact that often the original image is not square"""
 def my_iradon(radon_image, theta=None, output_size=None, filter="ramp", interpolation="linear", circle=True):
     if not (type(output_size) is tuple):
         return iradon(
